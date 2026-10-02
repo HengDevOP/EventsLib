@@ -13,6 +13,7 @@ import org.khmc.eventslib.gui.framework.MarketGUI;
 import org.khmc.eventslib.hook.ShardsHook;
 import org.khmc.eventslib.model.EventModel;
 import org.khmc.eventslib.util.ColorUtil;
+import org.khmc.eventslib.util.ModelUtil;
 import org.khmc.eventslib.util.SoundUtil;
 import org.khmc.eventslib.util.TimeResetUtil;
 
@@ -57,6 +58,33 @@ public class EventHubGUI {
                 gui.setButton(i, borderGlass, e -> e.setCancelled(true));
             }
         }
+
+        // Slot 4: Event Icon Header
+        ItemStack bannerItem = new ItemStack(Material.PAPER);
+        ItemMeta bnMeta = bannerItem.getItemMeta();
+        if (bnMeta != null) {
+            String cmdStr = event.getCustomModelData();
+            if (cmdStr.isEmpty() || cmdStr.equals("0")) {
+                String configKey = event.getPrivacy().isPublic() ? "icon.public-custom-model-data" : "icon.private-custom-model-data";
+                cmdStr = plugin.getConfig().getString(configKey, plugin.getConfig().getString("icon.default-custom-model-data", ""));
+            }
+            if (cmdStr != null && !cmdStr.isEmpty() && !cmdStr.equals("0")) {
+                ModelUtil.applyModel(bnMeta, cmdStr, plugin);
+            }
+
+            bnMeta.displayName(ColorUtil.parse("&e✦ &d" + event.getId()).decoration(TextDecoration.ITALIC, false));
+            List<Component> bnLore = new ArrayList<>();
+            bnLore.add(ColorUtil.parse("&7Title: " + event.getTitle()).decoration(TextDecoration.ITALIC, false));
+            bnLore.add(ColorUtil.parse("&7Privacy: " + event.getPrivacy().getFormattedDisplay()).decoration(TextDecoration.ITALIC, false));
+            if (event.hasCustomModelData()) {
+                bnLore.add(ColorUtil.parse("&7Model Data: &b" + event.getCustomModelData()).decoration(TextDecoration.ITALIC, false));
+            }
+            bnLore.add(ColorUtil.parse("&7Creator: &f" + event.getCreatorName()).decoration(TextDecoration.ITALIC, false));
+            bnMeta.lore(bnLore);
+            bnMeta.addItemFlags(ItemFlag.values());
+            bannerItem.setItemMeta(bnMeta);
+        }
+        gui.setButton(4, bannerItem, e -> e.setCancelled(true));
 
         // 1. Slot 10: Events Item & Daily Login Reward
         boolean hasClaimed = plugin.getEventManager().hasClaimedToday(player.getUniqueId(), event.getId());

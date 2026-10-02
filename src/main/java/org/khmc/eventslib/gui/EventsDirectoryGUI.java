@@ -14,6 +14,7 @@ import org.khmc.eventslib.gui.framework.MarketGUI;
 import org.khmc.eventslib.model.EventModel;
 import org.khmc.eventslib.model.EventPrivacy;
 import org.khmc.eventslib.util.ColorUtil;
+import org.khmc.eventslib.util.ModelUtil;
 import org.khmc.eventslib.util.SoundUtil;
 
 import java.util.ArrayList;
@@ -99,15 +100,7 @@ public class EventsDirectoryGUI {
                 }
 
                 if (cmdStr != null && !cmdStr.isEmpty() && !cmdStr.equals("0")) {
-                    try {
-                        int cmdInt = Integer.parseInt(cmdStr);
-                        if (cmdInt > 0) {
-                            meta.setCustomModelData(cmdInt);
-                        }
-                    } catch (NumberFormatException ignored) {}
-
-                    NamespacedKey key = new NamespacedKey(plugin, "custom_model_data");
-                    meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, cmdStr);
+                    ModelUtil.applyModel(meta, cmdStr, plugin);
                 }
 
                 meta.displayName(ColorUtil.parse("&e✦ &d" + ev.getId()).decoration(TextDecoration.ITALIC, false));
