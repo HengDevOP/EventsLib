@@ -1,0 +1,53 @@
+# ==============================================================================
+#                            EventsLib Configuration
+# ==============================================================================
+#  A high-performance Events Management Library with 54-slot GUI layouts,
+#  Daily Login Rewards (3:00 PM SGT reset), Event Shop, SQLite persistence,
+#  and custom model data support.
+# ==============================================================================
+
+# Database configuration
+database:
+  filename: "events.db"
+
+# Sound configuration
+sounds:
+  success:
+    sound: "ENTITY_PLAYER_LEVELUP"
+    volume: 1.0
+    pitch: 1.5
+  click:
+    sound: "UI_BUTTON_CLICK"
+    volume: 0.5
+    pitch: 1.0
+  error:
+    sound: "BLOCK_NOTE_BLOCK_PLING"
+    volume: 1.0
+    pitch: 0.5
+  toggle:
+    sound: "BLOCK_NOTE_BLOCK_CHIME"
+    volume: 1.0
+    pitch: 1.2
+
+# Icon configuration (uses default Paper item with optional custom-model-data string/int)
+icon:
+  default-custom-model-data: ""
+  private-custom-model-data: ""
+  public-custom-model-data: ""
+
+# System messages
+messages:
+  prefix: "&8[&dEventsLib&8] "
+  no-permission: "&cYou do not have permission to execute this command."
+  event-created: "&aEvent &e{id} &asuccessfully created! Default privacy: &cPRIVATE&a."
+  event-already-exists: "&cAn event with ID &e{id} &calready exists!"
+  event-not-found: "&cEvent &e{id} &cwas not found."
+  event-private: "&cThis event is currently private."
+  privacy-updated: "&aEvent &e{id} &aprivacy updated to &b{privacy}&a."
+  invalid-privacy: "&cInvalid privacy type! Available choices: &eprivate &cor &epublic&c."
+  model-updated: "&aEvent &e{id} &acustom-model-data set to &b{model}&a."
+  event-deleted: "&cEvent &e{id} &cdeleted successfully."
+  event-saved: "&aSaved 54-slot layout for event &e{id}&a."
+  invalid-id: "&cEvent ID may only contain alphanumeric characters, underscores, and hyphens (max 32 chars)."
+  editor-opened: "&7Opening 54-slot editor. Place your items and close the inventory to save."
+  reloaded: "&aConfiguration and events reloaded successfully."
