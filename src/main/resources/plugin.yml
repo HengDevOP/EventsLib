@@ -3,12 +3,20 @@ version: 1.0
 main: org.khmc.eventslib.EventsLibPlugin
 api-version: '1.21'
 folia-supported: true
-description: Powerful 54-slot events management library with SQLite persistence, Spin Wheel, and Shards economy integration.
+description: Powerful 54-slot events management library with SQLite persistence, Collections cosmetic system, Spin Wheel, and Shards economy integration.
 softdepend: [Shards]
 commands:
   el:
     description: EventsLib event management commands.
     aliases: [eventslib, eventlib]
+  collections:
+    description: Open cosmetic collections menu.
+    aliases: [collection, skins, wardrobe]
+    permission: collections.use
+  collectionadmin:
+    description: Manage cosmetic collections skins.
+    aliases: [cadmin, coladmin]
+    permission: collections.admin
 permissions:
   eventslib.admin:
     description: Allows full access to EventsLib admin management and editor commands.
@@ -16,3 +24,27 @@ permissions:
   eventslib.use:
     description: Allows viewing public events.
     default: true
+  collections.use:
+    description: Allows opening cosmetic collections menu.
+    default: true
+  collections.admin:
+    description: Allows managing cosmetic collections skins.
+    default: op
+  collections.admin.create:
+    description: Allows creating new skins.
+    default: op
+  collections.admin.delete:
+    description: Allows deleting skins.
+    default: op
+  collections.admin.edit:
+    description: Allows editing skins.
+    default: op
+  collections.admin.give:
+    description: Allows giving skins to players.
+    default: op
+  collections.admin.remove:
+    description: Allows removing skins from players.
+    default: op
+  collections.admin.reload:
+    description: Allows reloading collections database.
+    default: op

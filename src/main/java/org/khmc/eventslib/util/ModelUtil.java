@@ -133,6 +133,52 @@ public final class ModelUtil {
     }
 
     /**
+     * Resets any custom model data and item_model on an ItemMeta back to default.
+     */
+    public static void resetModel(ItemMeta meta, Plugin plugin) {
+        if (meta == null) return;
+        init(meta);
+
+        try {
+            meta.setCustomModelData(null);
+        } catch (Throwable ignored) {}
+
+        try {
+            if (setItemModelMethod != null) {
+                setItemModelMethod.invoke(meta, (NamespacedKey) null);
+            }
+        } catch (Throwable ignored) {}
+
+        try {
+            if (setCustomModelDataComponentMethod != null) {
+                setCustomModelDataComponentMethod.invoke(meta, (Object) null);
+            }
+        } catch (Throwable ignored) {}
+
+        if (plugin != null) {
+            try {
+                meta.getPersistentDataContainer().remove(new NamespacedKey(plugin, "custom_model_data"));
+                meta.getPersistentDataContainer().remove(new NamespacedKey(plugin, "item_model"));
+                meta.getPersistentDataContainer().remove(new NamespacedKey(plugin, "collections_skin_id"));
+                meta.getPersistentDataContainer().remove(new NamespacedKey(plugin, "collections_managed"));
+            } catch (Throwable ignored) {}
+        }
+    }
+
+    /**
+     * Resets any custom model data on an ItemStack back to default.
+     */
+    public static ItemStack resetModel(ItemStack item, Plugin plugin) {
+        if (item == null || item.getType().isAir()) return item;
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            resetModel(meta, plugin);
+            item.setItemMeta(meta);
+        }
+        return item;
+    }
+
+    /**
      * Applies custom model data to an ItemStack and updates its ItemMeta.
      */
     public static ItemStack applyModel(ItemStack item, String modelInput, Plugin plugin) {
