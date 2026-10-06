@@ -316,7 +316,7 @@ public class CollectionManager {
     public boolean syncItem(ItemStack item, PlayerCollectionProfile profile) {
         if (item == null || item.getType().isAir()) return false;
 
-        CollectionType matchingType = matchType(item.getType());
+        CollectionType matchingType = matchType(item, profile);
         if (matchingType == null) return false;
 
         String equippedSkinId = profile != null ? profile.getEquippedSkin(matchingType) : null;
@@ -352,14 +352,67 @@ public class CollectionManager {
         }
     }
 
+    public CollectionType matchType(ItemStack item, PlayerCollectionProfile profile) {
+        if (item == null || item.getType().isAir()) return null;
+        Material material = item.getType();
+
+        // 1. Check if the item already has a skin applied via PDC tag
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            PersistentDataContainer pdc = meta.getPersistentDataContainer();
+            String currentSkinId = pdc.get(skinIdKey, PersistentDataType.STRING);
+            if (currentSkinId != null) {
+                CollectionSkin currentSkin = getSkin(currentSkinId);
+                if (currentSkin != null) {
+                    return currentSkin.getType();
+                }
+            }
+        }
+
+        // 2. Trident is strictly TRIDENT (never Spear)
+        if (material == Material.TRIDENT) {
+            return CollectionType.TRIDENT;
+        }
+
+        // 3. Differentiate SPEAR from SWORD when base material is NETHERITE_SWORD
+        if (material == Material.NETHERITE_SWORD) {
+            if (meta != null && meta.hasDisplayName()) {
+                String plain = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(meta.displayName()).toLowerCase(Locale.ROOT);
+                if (plain.contains("spear")) {
+                    return CollectionType.SPEAR;
+                }
+            }
+            if (profile != null && profile.getEquippedSkin(CollectionType.SPEAR) != null && profile.getEquippedSkin(CollectionType.SWORD) == null) {
+                return CollectionType.SPEAR;
+            }
+            return CollectionType.SWORD;
+        }
+
+        // 4. Exact Material match across CollectionTypes
+        for (CollectionType type : CollectionType.values()) {
+            if (type != CollectionType.SPEAR && type.getBaseMaterial() == material) {
+                return type;
+            }
+        }
+
+        // 5. Also check custom skins base material
+        for (CollectionSkin skin : skins.values()) {
+            if (skin.getBaseMaterial() == material) {
+                return skin.getType();
+            }
+        }
+
+        return null;
+    }
+
     public CollectionType matchType(Material material) {
         if (material == null) return null;
+        if (material == Material.TRIDENT) return CollectionType.TRIDENT;
         for (CollectionType type : CollectionType.values()) {
             if (type.getBaseMaterial() == material) {
                 return type;
             }
         }
-        // Also check if any custom skin has this as base material
         for (CollectionSkin skin : skins.values()) {
             if (skin.getBaseMaterial() == material) {
                 return skin.getType();

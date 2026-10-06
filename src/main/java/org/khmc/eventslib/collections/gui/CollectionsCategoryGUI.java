@@ -81,7 +81,7 @@ public class CollectionsCategoryGUI {
         // Category Slots Mapping:
         // Tools: row 1 & 2 (slots 10..16, 19..22)
         // Armor: row 3 & 4 (slots 28..31)
-        int[] toolSlots = {10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22};
+        int[] toolSlots = {10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23};
         int[] armorSlots = {28, 29, 30, 31};
 
         int toolIdx = 0;

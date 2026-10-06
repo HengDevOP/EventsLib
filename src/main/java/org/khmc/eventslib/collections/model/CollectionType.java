@@ -10,17 +10,18 @@ public enum CollectionType {
     AXE("Netherite Axe", "NETHERITE_AXE", 2, CategoryGroup.TOOLS),
     SHOVEL("Netherite Shovel", "NETHERITE_SHOVEL", 3, CategoryGroup.TOOLS),
     HOE("Netherite Hoe", "NETHERITE_HOE", 4, CategoryGroup.TOOLS),
-    SPEAR("Netherite Spear", "NETHERITE_SPEAR", 5, CategoryGroup.TOOLS),
+    SPEAR("Netherite Spear", "NETHERITE_SWORD", 5, CategoryGroup.TOOLS),
     MACE("Mace", "MACE", 6, CategoryGroup.TOOLS),
-    BOW("Bow", "BOW", 7, CategoryGroup.TOOLS),
-    CROSSBOW("Crossbow", "CROSSBOW", 8, CategoryGroup.TOOLS),
-    FISHING_ROD("Fishing Rod", "FISHING_ROD", 9, CategoryGroup.TOOLS),
-    SHIELD("Shield", "SHIELD", 10, CategoryGroup.TOOLS),
+    TRIDENT("Trident", "TRIDENT", 7, CategoryGroup.TOOLS),
+    BOW("Bow", "BOW", 8, CategoryGroup.TOOLS),
+    CROSSBOW("Crossbow", "CROSSBOW", 9, CategoryGroup.TOOLS),
+    FISHING_ROD("Fishing Rod", "FISHING_ROD", 10, CategoryGroup.TOOLS),
+    SHIELD("Shield", "SHIELD", 11, CategoryGroup.TOOLS),
 
-    HELMET("Netherite Helmet", "NETHERITE_HELMET", 11, CategoryGroup.ARMOR),
-    CHESTPLATE("Netherite Chestplate", "NETHERITE_CHESTPLATE", 12, CategoryGroup.ARMOR),
-    LEGGINGS("Netherite Leggings", "NETHERITE_LEGGINGS", 13, CategoryGroup.ARMOR),
-    BOOTS("Netherite Boots", "NETHERITE_BOOTS", 14, CategoryGroup.ARMOR);
+    HELMET("Netherite Helmet", "NETHERITE_HELMET", 12, CategoryGroup.ARMOR),
+    CHESTPLATE("Netherite Chestplate", "NETHERITE_CHESTPLATE", 13, CategoryGroup.ARMOR),
+    LEGGINGS("Netherite Leggings", "NETHERITE_LEGGINGS", 14, CategoryGroup.ARMOR),
+    BOOTS("Netherite Boots", "NETHERITE_BOOTS", 15, CategoryGroup.ARMOR);
 
     public enum CategoryGroup {
         TOOLS,
@@ -58,11 +59,7 @@ public enum CollectionType {
     public Material getBaseMaterial() {
         Material mat = Material.matchMaterial(defaultMaterialName);
         if (mat == null) {
-            if (this == SPEAR) {
-                mat = Material.TRIDENT;
-            } else {
-                mat = Material.NETHERITE_SWORD;
-            }
+            mat = Material.NETHERITE_SWORD;
         }
         return mat;
     }
