@@ -382,29 +382,21 @@ public class CollectionManager {
         if (material == Material.GOLDEN_APPLE || material == Material.ENCHANTED_GOLDEN_APPLE) {
             return CollectionType.GOLDEN_APPLE;
         }
-
-        // 3. Differentiate SPEAR from SWORD when base material is NETHERITE_SWORD
+        if (material.name().endsWith("_SPEAR") || material.name().equals("SPEAR")) {
+            return CollectionType.SPEAR;
+        }
         if (material == Material.NETHERITE_SWORD) {
-            if (meta != null && meta.hasDisplayName()) {
-                String plain = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(meta.displayName()).toLowerCase(Locale.ROOT);
-                if (plain.contains("spear")) {
-                    return CollectionType.SPEAR;
-                }
-            }
-            if (profile != null && profile.getEquippedSkin(CollectionType.SPEAR) != null && profile.getEquippedSkin(CollectionType.SWORD) == null) {
-                return CollectionType.SPEAR;
-            }
             return CollectionType.SWORD;
         }
 
-        // 4. Exact Material match across CollectionTypes
+        // 3. Exact Material match across CollectionTypes
         for (CollectionType type : CollectionType.values()) {
-            if (type != CollectionType.SPEAR && type.getBaseMaterial() == material) {
+            if (type.getBaseMaterial() == material) {
                 return type;
             }
         }
 
-        // 5. Also check custom skins base material
+        // 4. Also check custom skins base material
         for (CollectionSkin skin : skins.values()) {
             if (skin.getBaseMaterial() == material) {
                 return skin.getType();
@@ -420,6 +412,8 @@ public class CollectionManager {
         if (material == Material.TOTEM_OF_UNDYING) return CollectionType.TOTEM;
         if (material == Material.EXPERIENCE_BOTTLE) return CollectionType.EXPERIENCE_BOTTLE;
         if (material == Material.GOLDEN_APPLE || material == Material.ENCHANTED_GOLDEN_APPLE) return CollectionType.GOLDEN_APPLE;
+        if (material.name().endsWith("_SPEAR") || material.name().equals("SPEAR")) return CollectionType.SPEAR;
+        if (material == Material.NETHERITE_SWORD) return CollectionType.SWORD;
         for (CollectionType type : CollectionType.values()) {
             if (type.getBaseMaterial() == material) {
                 return type;

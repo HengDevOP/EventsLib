@@ -130,13 +130,7 @@ public class CollectionsCategoryGUI {
             ItemStack catItem = new ItemStack(type.getBaseMaterial());
             ItemMeta cMeta = catItem.getItemMeta();
             if (cMeta != null) {
-                if (type == CollectionType.SPEAR) {
-                    org.khmc.eventslib.util.ModelUtil.applyModel(cMeta, "netherite_spear", plugin);
-                    cMeta.addEnchant(org.bukkit.enchantments.Enchantment.LUCK_OF_THE_SEA, 1, true);
-                    cMeta.displayName(ColorUtil.parse("&6✦ &e" + ColorUtil.toSmallCaps(type.getDisplayName())).decoration(TextDecoration.ITALIC, false));
-                } else {
-                    cMeta.displayName(ColorUtil.parse("&e✦ &f" + ColorUtil.toSmallCaps(type.getDisplayName())).decoration(TextDecoration.ITALIC, false));
-                }
+                cMeta.displayName(ColorUtil.parse("&e✦ &f" + ColorUtil.toSmallCaps(type.getDisplayName())).decoration(TextDecoration.ITALIC, false));
                 List<Component> cLore = new ArrayList<>();
                 cLore.add(ColorUtil.parse("&7Category: &e" + type.getGroup().name()).decoration(TextDecoration.ITALIC, false));
                 cLore.add(ColorUtil.parse("&7Skins Collected: &a" + catOwned + " &7/ &f" + catTotal).decoration(TextDecoration.ITALIC, false));

@@ -10,7 +10,7 @@ public enum CollectionType {
     AXE("Netherite Axe", "NETHERITE_AXE", 2, CategoryGroup.TOOLS),
     SHOVEL("Netherite Shovel", "NETHERITE_SHOVEL", 3, CategoryGroup.TOOLS),
     HOE("Netherite Hoe", "NETHERITE_HOE", 4, CategoryGroup.TOOLS),
-    SPEAR("Netherite Spear", "NETHERITE_SWORD", 5, CategoryGroup.TOOLS),
+    SPEAR("Netherite Spear", "NETHERITE_SPEAR", 5, CategoryGroup.TOOLS),
     MACE("Mace", "MACE", 6, CategoryGroup.TOOLS),
     TRIDENT("Trident", "TRIDENT", 7, CategoryGroup.TOOLS),
     BOW("Bow", "BOW", 8, CategoryGroup.TOOLS),
