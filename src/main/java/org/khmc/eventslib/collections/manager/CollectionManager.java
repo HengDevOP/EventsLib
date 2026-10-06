@@ -303,6 +303,10 @@ public class CollectionManager {
         if (changedExtra) {
             player.getInventory().setExtraContents(extra);
         }
+
+        if (changedStorage || changedArmor || changedExtra) {
+            player.updateInventory();
+        }
     }
 
     /**
@@ -325,19 +329,19 @@ public class CollectionManager {
         String currentSkinId = pdc.get(skinIdKey, PersistentDataType.STRING);
 
         if (targetSkin != null && targetSkin.isEnabled()) {
-            // Should apply targetSkin
-            if (targetSkin.getId().equalsIgnoreCase(currentSkinId)) {
-                // Already up to date
+            String targetModel = targetSkin.getCustomModel();
+            // Verify if truly up to date (both ID and custom model strings present, with no conflicting item_model)
+            if (targetSkin.getId().equalsIgnoreCase(currentSkinId) && ModelUtil.hasCustomModelString(meta, targetModel)) {
                 return false;
             }
-            ModelUtil.applyModel(meta, targetSkin.getCustomModel(), plugin);
+            ModelUtil.applyModel(meta, targetModel, plugin);
             pdc.set(skinIdKey, PersistentDataType.STRING, targetSkin.getId());
             pdc.set(managedKey, PersistentDataType.STRING, "true");
             item.setItemMeta(meta);
             return true;
         } else {
             // Should be default
-            if (currentSkinId != null || pdc.has(managedKey, PersistentDataType.STRING)) {
+            if (currentSkinId != null || pdc.has(managedKey, PersistentDataType.STRING) || ModelUtil.hasAnyCustomModel(meta)) {
                 ModelUtil.resetModel(meta, plugin);
                 pdc.remove(skinIdKey);
                 pdc.remove(managedKey);

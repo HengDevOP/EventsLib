@@ -55,6 +55,7 @@ public class CollectionItemListener implements Listener {
         ItemStack item = event.getItem().getItemStack();
         if (manager.syncItem(item, profile)) {
             event.getItem().setItemStack(item);
+            player.updateInventory();
         }
     }
 
@@ -68,6 +69,7 @@ public class CollectionItemListener implements Listener {
         if (item != null && !item.getType().isAir()) {
             if (manager.syncItem(item, profile)) {
                 player.getInventory().setItem(event.getNewSlot(), item);
+                player.updateInventory();
             }
         }
     }
@@ -78,31 +80,51 @@ public class CollectionItemListener implements Listener {
         PlayerCollectionProfile profile = manager.getProfile(player);
         if (profile == null) return;
 
+        boolean changed = false;
         ItemStack main = event.getMainHandItem();
         if (main != null && !main.getType().isAir()) {
-            manager.syncItem(main, profile);
+            if (manager.syncItem(main, profile)) changed = true;
         }
 
         ItemStack off = event.getOffHandItem();
         if (off != null && !off.getType().isAir()) {
-            manager.syncItem(off, profile);
+            if (manager.syncItem(off, profile)) changed = true;
+        }
+
+        if (changed) {
+            player.updateInventory();
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player player)) return;
+        if (event.getClickedInventory() == null) return;
+
+        // Never touch items in custom GUIs
+        if (event.getInventory().getHolder() instanceof org.khmc.eventslib.gui.framework.MarketGUI) {
+            return;
+        }
+        if (!event.getClickedInventory().equals(player.getInventory())) {
+            return;
+        }
+
         PlayerCollectionProfile profile = manager.getProfile(player);
         if (profile == null) return;
 
+        boolean changed = false;
         ItemStack current = event.getCurrentItem();
         if (current != null && !current.getType().isAir()) {
-            manager.syncItem(current, profile);
+            if (manager.syncItem(current, profile)) changed = true;
         }
 
         ItemStack cursor = event.getCursor();
         if (cursor != null && !cursor.getType().isAir()) {
-            manager.syncItem(cursor, profile);
+            if (manager.syncItem(cursor, profile)) changed = true;
+        }
+
+        if (changed) {
+            player.updateInventory();
         }
     }
 
