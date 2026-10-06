@@ -56,7 +56,9 @@ public class EventsLibPlugin extends JavaPlugin {
 
         PluginCommand collectionsCmd = getCommand("collections");
         if (collectionsCmd != null) {
-            collectionsCmd.setExecutor(new CollectionsCommand(this));
+            CollectionsCommand collectionsExecutor = new CollectionsCommand(this);
+            collectionsCmd.setExecutor(collectionsExecutor);
+            collectionsCmd.setTabCompleter(collectionsExecutor);
         }
 
         PluginCommand cadminCmd = getCommand("collectionadmin");
