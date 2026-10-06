@@ -368,6 +368,31 @@ public class CollectionManager {
         return null;
     }
 
+    /**
+     * Clears any collection cosmetic skin and custom model strings from an ItemStack
+     * when it is dropped or leaves the player's possession.
+     */
+    public boolean clearSkinIfManaged(ItemStack item) {
+        if (item == null || item.getType().isAir()) return false;
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) return false;
+
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
+        boolean hasManagedTag = pdc.has(managedKey, PersistentDataType.STRING);
+        boolean hasSkinTag = pdc.has(skinIdKey, PersistentDataType.STRING);
+
+        if (hasManagedTag || hasSkinTag || matchType(item.getType()) != null) {
+            if (hasManagedTag || hasSkinTag || ModelUtil.hasAnyCustomModel(meta)) {
+                ModelUtil.resetModel(meta, plugin);
+                pdc.remove(skinIdKey);
+                pdc.remove(managedKey);
+                item.setItemMeta(meta);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void close() {
         if (databaseManager != null) {
             databaseManager.close();

@@ -1,13 +1,16 @@
 package org.khmc.eventslib.collections.listener;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -136,6 +139,23 @@ public class CollectionItemListener implements Listener {
                     manager.syncPlayerItems(player);
                 }
             }, 1L);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onPlayerDropItem(PlayerDropItemEvent event) {
+        Item drop = event.getItemDrop();
+        if (drop == null) return;
+        ItemStack item = drop.getItemStack();
+        if (manager.clearSkinIfManaged(item)) {
+            drop.setItemStack(item);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        for (ItemStack drop : event.getDrops()) {
+            manager.clearSkinIfManaged(drop);
         }
     }
 }
