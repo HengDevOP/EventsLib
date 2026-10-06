@@ -65,7 +65,8 @@ public class CollectionSkinsGUI {
 
         // Slot 4: Category Info Header
         String currentlyEquipped = profile != null ? profile.getEquippedSkin(type) : null;
-        CollectionSkin eqSkin = (currentlyEquipped != null) ? manager.getSkin(currentlyEquipped) : null;
+        boolean isDefaultEquipped = (currentlyEquipped == null || currentlyEquipped.isEmpty());
+        CollectionSkin eqSkin = (!isDefaultEquipped) ? manager.getSkin(currentlyEquipped) : null;
         String eqName = (eqSkin != null) ? "&b" + eqSkin.getName() : "&7None (Default)";
 
         int ownedCount = 0;
@@ -94,50 +95,58 @@ public class CollectionSkinsGUI {
         }
         gui.setButton(4, catBanner, e -> e.setCancelled(true));
 
-        // Slot 48: Default / Unequip Skin Button
-        boolean isDefaultEquipped = (currentlyEquipped == null || currentlyEquipped.isEmpty());
-        ItemStack defaultItem = new ItemStack(isDefaultEquipped ? Material.NETHERITE_INGOT : Material.BARRIER);
-        ItemMeta dMeta = defaultItem.getItemMeta();
-        if (dMeta != null) {
-            dMeta.displayName(ColorUtil.parse("&6✦ " + ColorUtil.toSmallCaps("default skin")).decoration(TextDecoration.ITALIC, false));
-            List<Component> dLore = new ArrayList<>();
-            dLore.add(ColorUtil.parse("&7Unequip cosmetic skins and revert to").decoration(TextDecoration.ITALIC, false));
-            dLore.add(ColorUtil.parse("&7the standard vanilla appearance.").decoration(TextDecoration.ITALIC, false));
-            dLore.add(ColorUtil.parse("&8-----------------------------").decoration(TextDecoration.ITALIC, false));
-            if (isDefaultEquipped) {
-                dLore.add(ColorUtil.parse("&a✔ EQUIPPED").decoration(TextDecoration.ITALIC, false));
-            } else {
-                dLore.add(ColorUtil.parse("&e✦ Click to unequip cosmetic.").decoration(TextDecoration.ITALIC, false));
-            }
-            dMeta.lore(dLore);
-            dMeta.addItemFlags(ItemFlag.values());
-            defaultItem.setItemMeta(dMeta);
-        }
-        gui.setButton(48, defaultItem, e -> {
-            e.setCancelled(true);
-            if (isDefaultEquipped) {
-                SoundUtil.playClick(player);
-                return;
-            }
-            manager.equipSkin(player, type, null);
-            SoundUtil.playSuccess(player);
-            player.sendMessage(ColorUtil.parse(plugin.getConfig().getString("messages.prefix", "&8[&dEventsLib&8] ") +
-                    "&aUnequipped cosmetic skin for &e" + type.getDisplayName() + "&a. Reverted to default."));
-            open(player);
-        });
-
-        // Skins Pagination
+        // Combined List: Index 0 is Default Skin, followed by all custom skins
         List<CollectionSkin> allSkins = manager.getSkinsForType(type);
-        int totalPages = Math.max(1, (int) Math.ceil((double) allSkins.size() / PAGE_SIZE));
+        int totalItems = 1 + allSkins.size();
+        int totalPages = Math.max(1, (int) Math.ceil((double) totalItems / PAGE_SIZE));
         int startIndex = page * PAGE_SIZE;
-        int endIndex = Math.min(startIndex + PAGE_SIZE, allSkins.size());
 
         for (int i = 0; i < CONTENT_SLOTS.length; i++) {
             int slot = CONTENT_SLOTS[i];
-            int skinIdx = startIndex + i;
+            int itemIdx = startIndex + i;
 
-            if (skinIdx < endIndex) {
-                CollectionSkin skin = allSkins.get(skinIdx);
+            if (itemIdx >= totalItems) {
+                gui.setButton(slot, null, null);
+                continue;
+            }
+
+            if (itemIdx == 0) {
+                // First Item: Default Skin
+                ItemStack defaultItem = new ItemStack(type.getBaseMaterial());
+                ItemMeta dMeta = defaultItem.getItemMeta();
+                if (dMeta != null) {
+                    dMeta.displayName(ColorUtil.parse("&e✦ &f" + ColorUtil.toSmallCaps("default " + type.getDisplayName())).decoration(TextDecoration.ITALIC, false));
+                    List<Component> dLore = new ArrayList<>();
+                    dLore.add(ColorUtil.parse("&7Standard vanilla appearance.").decoration(TextDecoration.ITALIC, false));
+                    dLore.add(ColorUtil.parse("&8-----------------------------").decoration(TextDecoration.ITALIC, false));
+                    if (isDefaultEquipped) {
+                        dLore.add(ColorUtil.parse("&a✔ EQUIPPED").decoration(TextDecoration.ITALIC, false));
+                    } else {
+                        dLore.add(ColorUtil.parse("&eClick to equip.").decoration(TextDecoration.ITALIC, false));
+                    }
+                    dMeta.lore(dLore);
+                    dMeta.addItemFlags(ItemFlag.values());
+                    defaultItem.setItemMeta(dMeta);
+                }
+
+                gui.setButton(slot, defaultItem, e -> {
+                    e.setCancelled(true);
+                    if (isDefaultEquipped) {
+                        SoundUtil.playClick(player);
+                        player.sendMessage(ColorUtil.parse(plugin.getConfig().getString("messages.prefix", "&8[&dEventsLib&8] ") +
+                                "&7You already have the default skin equipped!"));
+                        return;
+                    }
+
+                    manager.equipSkin(player, type, null);
+                    SoundUtil.playSuccess(player);
+                    player.sendMessage(ColorUtil.parse(plugin.getConfig().getString("messages.prefix", "&8[&dEventsLib&8] ") +
+                            "&aUnequipped cosmetic skin for &e" + type.getDisplayName() + "&a. Reverted to default."));
+                    open(player);
+                });
+            } else {
+                // Custom Skin: index - 1
+                CollectionSkin skin = allSkins.get(itemIdx - 1);
                 boolean isOwned = (profile != null && profile.hasUnlocked(skin.getId())) || player.hasPermission("collections.admin");
                 boolean isEquipped = skin.getId().equalsIgnoreCase(currentlyEquipped);
 
@@ -157,11 +166,9 @@ public class CollectionSkinsGUI {
                     if (isEquipped) {
                         sLore.add(ColorUtil.parse("&a✔ EQUIPPED").decoration(TextDecoration.ITALIC, false));
                     } else if (isOwned) {
-                        sLore.add(ColorUtil.parse("&b✦ UNLOCKED").decoration(TextDecoration.ITALIC, false));
                         sLore.add(ColorUtil.parse("&eClick to equip.").decoration(TextDecoration.ITALIC, false));
                     } else {
-                        sLore.add(ColorUtil.parse("&c✕ LOCKED").decoration(TextDecoration.ITALIC, false));
-                        sLore.add(ColorUtil.parse("&7You don't own this skin.").decoration(TextDecoration.ITALIC, false));
+                        sLore.add(ColorUtil.parse("&cLocked").decoration(TextDecoration.ITALIC, false));
                     }
 
                     sMeta.lore(sLore);
@@ -181,7 +188,7 @@ public class CollectionSkinsGUI {
                     if (!isOwned) {
                         SoundUtil.playError(player);
                         player.sendMessage(ColorUtil.parse(plugin.getConfig().getString("messages.prefix", "&8[&dEventsLib&8] ") +
-                                "&cYou do not own the &e" + skin.getName() + " &cskin! Status: &cLOCKED&c."));
+                                "&cYou do not own the &e" + skin.getName() + " &cskin! Status: &cLocked&c."));
                         return;
                     }
 
@@ -195,8 +202,6 @@ public class CollectionSkinsGUI {
                         SoundUtil.playError(player);
                     }
                 });
-            } else {
-                gui.setButton(slot, null, null);
             }
         }
 
