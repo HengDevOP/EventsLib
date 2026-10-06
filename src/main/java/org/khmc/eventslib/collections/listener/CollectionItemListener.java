@@ -8,8 +8,10 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -132,6 +134,13 @@ public class CollectionItemListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
+    public void onInventoryOpen(InventoryOpenEvent event) {
+        if (event.getPlayer() instanceof Player player) {
+            manager.syncPlayerItems(player);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onInventoryClose(InventoryCloseEvent event) {
         if (event.getPlayer() instanceof Player player) {
             SchedulerUtil.runTaskLater(plugin, () -> {
@@ -140,6 +149,16 @@ public class CollectionItemListener implements Listener {
                 }
             }, 1L);
         }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onArmorChange(PlayerArmorChangeEvent event) {
+        Player player = event.getPlayer();
+        SchedulerUtil.runTaskLater(plugin, () -> {
+            if (player.isOnline()) {
+                manager.syncPlayerItems(player);
+            }
+        }, 1L);
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)

@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -274,20 +275,44 @@ public class CollectionManager {
             player.getInventory().setStorageContents(storage);
         }
 
-        // 2. Armor contents
-        ItemStack[] armor = player.getInventory().getArmorContents();
+        // 2. Armor equipment slots
         boolean changedArmor = false;
-        for (int i = 0; i < armor.length; i++) {
-            ItemStack item = armor[i];
-            if (item != null && !item.getType().isAir()) {
-                if (syncItem(item, profile)) {
-                    changedArmor = true;
-                }
+
+        ItemStack helmet = player.getInventory().getHelmet();
+        if (helmet != null && !helmet.getType().isAir()) {
+            if (syncItem(helmet, profile)) {
+                player.getInventory().setHelmet(helmet);
+                changedArmor = true;
             }
         }
-        if (changedArmor) {
-            player.getInventory().setArmorContents(armor);
+        sendEquipmentChange(player, EquipmentSlot.HEAD, player.getInventory().getHelmet());
+
+        ItemStack chestplate = player.getInventory().getChestplate();
+        if (chestplate != null && !chestplate.getType().isAir()) {
+            if (syncItem(chestplate, profile)) {
+                player.getInventory().setChestplate(chestplate);
+                changedArmor = true;
+            }
         }
+        sendEquipmentChange(player, EquipmentSlot.CHEST, player.getInventory().getChestplate());
+
+        ItemStack leggings = player.getInventory().getLeggings();
+        if (leggings != null && !leggings.getType().isAir()) {
+            if (syncItem(leggings, profile)) {
+                player.getInventory().setLeggings(leggings);
+                changedArmor = true;
+            }
+        }
+        sendEquipmentChange(player, EquipmentSlot.LEGS, player.getInventory().getLeggings());
+
+        ItemStack boots = player.getInventory().getBoots();
+        if (boots != null && !boots.getType().isAir()) {
+            if (syncItem(boots, profile)) {
+                player.getInventory().setBoots(boots);
+                changedArmor = true;
+            }
+        }
+        sendEquipmentChange(player, EquipmentSlot.FEET, player.getInventory().getBoots());
 
         // 3. Extra contents (Off-hand)
         ItemStack[] extra = player.getInventory().getExtraContents();
@@ -303,10 +328,25 @@ public class CollectionManager {
         if (changedExtra) {
             player.getInventory().setExtraContents(extra);
         }
+        sendEquipmentChange(player, EquipmentSlot.OFF_HAND, player.getInventory().getItemInOffHand());
+        sendEquipmentChange(player, EquipmentSlot.HAND, player.getInventory().getItemInMainHand());
 
         if (changedStorage || changedArmor || changedExtra) {
             player.updateInventory();
         }
+    }
+
+    public void sendEquipmentChange(Player player, EquipmentSlot slot, ItemStack item) {
+        if (player == null || !player.isOnline() || slot == null) return;
+        ItemStack toSend = (item != null) ? item : new ItemStack(Material.AIR);
+        try {
+            player.sendEquipmentChange(player, slot, toSend);
+            for (Player viewer : player.getWorld().getPlayers()) {
+                if (!viewer.equals(player) && viewer.getLocation().distanceSquared(player.getLocation()) < 64 * 64) {
+                    viewer.sendEquipmentChange(player, slot, toSend);
+                }
+            }
+        } catch (Throwable ignored) {}
     }
 
     /**

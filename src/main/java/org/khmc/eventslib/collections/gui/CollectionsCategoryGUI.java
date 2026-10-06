@@ -125,7 +125,7 @@ public class CollectionsCategoryGUI {
 
             String equippedSkinId = profile != null ? profile.getEquippedSkin(type) : null;
             CollectionSkin equippedSkin = (equippedSkinId != null) ? manager.getSkin(equippedSkinId) : null;
-            String equippedDisplay = (equippedSkin != null) ? "&b" + equippedSkin.getName() : "&7None (Default)";
+            String equippedDisplay = (equippedSkin != null) ? "&b" + equippedSkin.getName() : "&7None";
 
             ItemStack catItem = new ItemStack(type.getBaseMaterial());
             ItemMeta cMeta = catItem.getItemMeta();
