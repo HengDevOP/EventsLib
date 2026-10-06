@@ -18,14 +18,19 @@ public enum CollectionType {
     FISHING_ROD("Fishing Rod", "FISHING_ROD", 10, CategoryGroup.TOOLS),
     SHIELD("Shield", "SHIELD", 11, CategoryGroup.TOOLS),
 
-    HELMET("Netherite Helmet", "NETHERITE_HELMET", 12, CategoryGroup.ARMOR),
-    CHESTPLATE("Netherite Chestplate", "NETHERITE_CHESTPLATE", 13, CategoryGroup.ARMOR),
-    LEGGINGS("Netherite Leggings", "NETHERITE_LEGGINGS", 14, CategoryGroup.ARMOR),
-    BOOTS("Netherite Boots", "NETHERITE_BOOTS", 15, CategoryGroup.ARMOR);
+    TOTEM("Totem of Undying", "TOTEM_OF_UNDYING", 12, CategoryGroup.ITEMS),
+    EXPERIENCE_BOTTLE("Bottle of Experience", "EXPERIENCE_BOTTLE", 13, CategoryGroup.ITEMS),
+    GOLDEN_APPLE("Golden Apple", "GOLDEN_APPLE", 14, CategoryGroup.ITEMS),
+
+    HELMET("Netherite Helmet", "NETHERITE_HELMET", 15, CategoryGroup.ARMOR),
+    CHESTPLATE("Netherite Chestplate", "NETHERITE_CHESTPLATE", 16, CategoryGroup.ARMOR),
+    LEGGINGS("Netherite Leggings", "NETHERITE_LEGGINGS", 17, CategoryGroup.ARMOR),
+    BOOTS("Netherite Boots", "NETHERITE_BOOTS", 18, CategoryGroup.ARMOR);
 
     public enum CategoryGroup {
         TOOLS,
-        ARMOR
+        ARMOR,
+        ITEMS
     }
 
     private final String displayName;

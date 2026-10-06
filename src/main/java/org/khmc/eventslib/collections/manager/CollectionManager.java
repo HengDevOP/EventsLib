@@ -369,9 +369,18 @@ public class CollectionManager {
             }
         }
 
-        // 2. Trident is strictly TRIDENT (never Spear)
+        // 2. Special item matches
         if (material == Material.TRIDENT) {
             return CollectionType.TRIDENT;
+        }
+        if (material == Material.TOTEM_OF_UNDYING) {
+            return CollectionType.TOTEM;
+        }
+        if (material == Material.EXPERIENCE_BOTTLE) {
+            return CollectionType.EXPERIENCE_BOTTLE;
+        }
+        if (material == Material.GOLDEN_APPLE || material == Material.ENCHANTED_GOLDEN_APPLE) {
+            return CollectionType.GOLDEN_APPLE;
         }
 
         // 3. Differentiate SPEAR from SWORD when base material is NETHERITE_SWORD
@@ -408,6 +417,9 @@ public class CollectionManager {
     public CollectionType matchType(Material material) {
         if (material == null) return null;
         if (material == Material.TRIDENT) return CollectionType.TRIDENT;
+        if (material == Material.TOTEM_OF_UNDYING) return CollectionType.TOTEM;
+        if (material == Material.EXPERIENCE_BOTTLE) return CollectionType.EXPERIENCE_BOTTLE;
+        if (material == Material.GOLDEN_APPLE || material == Material.ENCHANTED_GOLDEN_APPLE) return CollectionType.GOLDEN_APPLE;
         for (CollectionType type : CollectionType.values()) {
             if (type.getBaseMaterial() == material) {
                 return type;

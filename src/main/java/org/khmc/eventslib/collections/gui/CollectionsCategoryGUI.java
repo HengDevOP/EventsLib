@@ -79,12 +79,15 @@ public class CollectionsCategoryGUI {
         gui.setButton(4, headerItem, e -> e.setCancelled(true));
 
         // Category Slots Mapping:
-        // Tools: row 1 & 2 (slots 10..16, 19..22)
-        // Armor: row 3 & 4 (slots 28..31)
+        // Tools: row 1 & row 2 (slots 10..16, 19..23)
+        // Items: row 2 (slots 24..26: Totem, Exp Bottle, Golden Apple)
+        // Armor: row 3 (slots 30..33: Helmet, Chestplate, Leggings, Boots)
         int[] toolSlots = {10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23};
-        int[] armorSlots = {28, 29, 30, 31};
+        int[] itemSlots = {24, 25, 26};
+        int[] armorSlots = {30, 31, 32, 33};
 
         int toolIdx = 0;
+        int itemIdx = 0;
         int armorIdx = 0;
 
         for (CollectionType type : CollectionType.values()) {
@@ -92,6 +95,12 @@ public class CollectionsCategoryGUI {
             if (type.getGroup() == CollectionType.CategoryGroup.TOOLS) {
                 if (toolIdx < toolSlots.length) {
                     slot = toolSlots[toolIdx++];
+                } else {
+                    continue;
+                }
+            } else if (type.getGroup() == CollectionType.CategoryGroup.ITEMS) {
+                if (itemIdx < itemSlots.length) {
+                    slot = itemSlots[itemIdx++];
                 } else {
                     continue;
                 }
@@ -104,10 +113,8 @@ public class CollectionsCategoryGUI {
             }
 
             int catTotal = manager.getTotalSkinsCount(type);
-            int catOwned = profile != null ? profile.getUnlockedCount(type, (manager.getAllSkins() instanceof java.util.Map<?,?> ? null : null)) : 0;
-            // Count manually to ensure exact accuracy
+            int catOwned = 0;
             if (profile != null) {
-                catOwned = 0;
                 for (String sid : profile.getUnlockedSkins()) {
                     CollectionSkin s = manager.getSkin(sid);
                     if (s != null && s.getType() == type && s.isEnabled()) {
@@ -123,6 +130,9 @@ public class CollectionsCategoryGUI {
             ItemStack catItem = new ItemStack(type.getBaseMaterial());
             ItemMeta cMeta = catItem.getItemMeta();
             if (cMeta != null) {
+                if (type == CollectionType.SPEAR) {
+                    org.khmc.eventslib.util.ModelUtil.applyModel(cMeta, "netherite_spear", plugin);
+                }
                 cMeta.displayName(ColorUtil.parse("&e✦ &f" + ColorUtil.toSmallCaps(type.getDisplayName())).decoration(TextDecoration.ITALIC, false));
                 List<Component> cLore = new ArrayList<>();
                 cLore.add(ColorUtil.parse("&7Category: &e" + type.getGroup().name()).decoration(TextDecoration.ITALIC, false));

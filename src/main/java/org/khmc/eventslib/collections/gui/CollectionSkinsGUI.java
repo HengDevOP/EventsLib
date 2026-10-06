@@ -124,6 +124,9 @@ public class CollectionSkinsGUI {
                     } else {
                         dLore.add(ColorUtil.parse("&eClick to equip.").decoration(TextDecoration.ITALIC, false));
                     }
+                    if (type == CollectionType.SPEAR) {
+                        org.khmc.eventslib.util.ModelUtil.applyModel(dMeta, "netherite_spear", plugin);
+                    }
                     dMeta.lore(dLore);
                     dMeta.addItemFlags(ItemFlag.values());
                     defaultItem.setItemMeta(dMeta);
