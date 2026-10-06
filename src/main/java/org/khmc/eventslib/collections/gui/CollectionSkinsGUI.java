@@ -106,7 +106,6 @@ public class CollectionSkinsGUI {
             dLore.add(ColorUtil.parse("&8-----------------------------").decoration(TextDecoration.ITALIC, false));
             if (isDefaultEquipped) {
                 dLore.add(ColorUtil.parse("&a✔ EQUIPPED").decoration(TextDecoration.ITALIC, false));
-                dLore.add(ColorUtil.parse("&7Currently active.").decoration(TextDecoration.ITALIC, false));
             } else {
                 dLore.add(ColorUtil.parse("&e✦ Click to unequip cosmetic.").decoration(TextDecoration.ITALIC, false));
             }
@@ -157,7 +156,6 @@ public class CollectionSkinsGUI {
 
                     if (isEquipped) {
                         sLore.add(ColorUtil.parse("&a✔ EQUIPPED").decoration(TextDecoration.ITALIC, false));
-                        sLore.add(ColorUtil.parse("&7Currently active.").decoration(TextDecoration.ITALIC, false));
                     } else if (isOwned) {
                         sLore.add(ColorUtil.parse("&b✦ UNLOCKED").decoration(TextDecoration.ITALIC, false));
                         sLore.add(ColorUtil.parse("&eClick to equip.").decoration(TextDecoration.ITALIC, false));
@@ -166,7 +164,6 @@ public class CollectionSkinsGUI {
                         sLore.add(ColorUtil.parse("&7You don't own this skin.").decoration(TextDecoration.ITALIC, false));
                     }
 
-                    sLore.add(ColorUtil.parse("&8Skin ID: &7" + skin.getId()).decoration(TextDecoration.ITALIC, false));
                     sMeta.lore(sLore);
                     sMeta.addItemFlags(ItemFlag.values());
                     skinItem.setItemMeta(sMeta);
