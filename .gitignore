@@ -15,5 +15,5 @@ out/
 Thumbs.db
 
 # Runtime data
-database/
+/database/
 run/
